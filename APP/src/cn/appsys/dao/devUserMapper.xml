@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.appsys.dao.devUserMapper">
+	<!--三级分类 -->
+	<select id="ThirdClassification" resultType="ac">
+		SELECT 
+			`categoryName` ,id
+		FROM 
+			`app_category`
+		 WHERE 
+		 	`parentId`=#{parentId}
+	</select>
+
+	<!--二级分类 -->
+	<select id="SecondaryClassification" resultType="ac">
+		SELECT
+		categoryName,id
+		FROM
+		`app_category`
+		WHERE
+		parentId=#{parentId}
+	</select>
+
+	<!-- //查询一级分类 -->
+	<select id="FirstClassifying" resultType="ac">
+		SELECT
+		categoryName,id
+		FROM
+		`app_category`
+		WHERE
+		`parentId`=0
+	</select>
+	<!-- //查询状态和平台 -->
+	<select id="getAllBy" resultType="dd" parameterType="String">
+		SELECT * FROM `data_dictionary` WHERE typeName=#{typeName}
+	</select>
+
+	<!-- 登陸 -->
+	<select id="deleteByPrimaryKey" resultType="du">
+		select * from dev_user where devCode=#{devCode}
+	</select>
+	<!--查询总记录数  -->
+	<select id="count" resultType="int" parameterType="ai">
+			select count(id) from app_info 
+			
+			<trim prefix="where" prefixOverrides="and|or">
+					<if test="ai.softwareName!='' and ai.softwareName!=null ">
+						 and softwareName like CONCAT ('%',#{ai.softwareName},'%')
+					</if> 
+					<if test="ai.status!=null and ai.status!='' and ai.status!=0">
+						and	status=#{ai.status}
+					</if>
+					<if test="ai.flatformId!=null and ai.flatformId!='' and ai.flatformId!=0">
+							and flatformId=#{ai.flatformId}
+					</if>
+					<if test="ai.categoryLevel1!=null and ai.categoryLevel1!='' and ai.categoryLevel1!=0">
+							and categoryLevel1=#{ai.categoryLevel1}
+					</if>
+					<if test="ai.categoryLevel2!=null and ai.categoryLevel2!='' and ai.categoryLevel2!=0">
+							and categoryLevel2=#{ai.categoryLevel2}
+					</if>
+					<if test="ai.categoryLevel3!=null and ai.categoryLevel3!='' and ai.categoryLevel3!=0">
+							and categoryLevel3=#{ai.categoryLevel3}
+					</if> 
+		</trim>
+	</select>
+	<select id="QueryAll" resultMap="listQ" parameterType="ai">
+		SELECT
+		a.*,d.`valueName` AS flatForm,c.`valueName` AS sta ,b.`categoryName` AS firstName,
+		e.`categoryName` AS secondName,f.`categoryName` AS thirdName,g.`versionNo`,g.`id`as gid
+		FROM
+		(app_info a,data_dictionary d,data_dictionary c ,app_category b,app_category e,app_category f)
+		LEFT JOIN
+		app_version g ON g.`appId`=a.`id` AND g.`id`
+		IN
+				(SELECT MAX(id) FROM app_version GROUP BY appId)
+		WHERE
+				a.`flatformId`=d.`valueId`
+		AND
+				d.typeCode = 'APP_FLATFORM'
+		AND
+				a.`status`=c.`valueId`
+		AND
+				c.typeCode = 'APP_STATUS'
+		AND
+				b.id=a.`categoryLevel1`
+		AND
+				e.`id`=a.`categoryLevel2`
+		AND
+				f.`id`=a.`categoryLevel3`
+				
+				
+				<if test="ai.softwareName!='' and ai.softwareName!=null ">
+						 and a.softwareName like CONCAT ('%',#{ai.softwareName},'%')
+					</if> 
+					<if test="ai.status!=null and ai.status!='' and ai.status!=0">
+						and	a.status=#{ai.status}
+					</if>
+					<if test="ai.flatformId!=null and ai.flatformId!='' and ai.flatformId!=0">
+							and a.flatformId=#{ai.flatformId}
+					</if>
+					<if test="ai.categoryLevel1!=null and ai.categoryLevel1!='' and ai.categoryLevel1!=0">
+							and a.categoryLevel1=#{ai.categoryLevel1}
+					</if>
+					<if test="ai.categoryLevel2!=null and ai.categoryLevel2!='' and ai.categoryLevel2!=0">
+							and a.categoryLevel2=#{ai.categoryLevel2}
+					</if>
+					<if test="ai.categoryLevel3!=null and ai.categoryLevel3!='' and ai.categoryLevel3!=0">
+							and a.categoryLevel3=#{ai.categoryLevel3}
+					</if> 
+		ORDER BY
+				creationDate,modifyDate DESC
+		
+		 LIMIT #{map.n},#{map.size}
+	</select>
+	<resultMap type="ai" id="listQ" autoMapping="true">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="softwareName" property="softwareName" jdbcType="VARCHAR" />
+		<result column="APKName" property="APKName" jdbcType="VARCHAR" />
+		<result column="supportROM" property="supportROM" jdbcType="VARCHAR" />
+		<result column="interfaceLanguage" property="interfaceLanguage"
+			jdbcType="VARCHAR" />
+		<result column="softwareSize" property="softwareSize" />
+		<result column="updateDate" property="updateDate" jdbcType="DATE" />
+		<result column="devId" property="devId" jdbcType="BIGINT" />
+		<result column="appInfo" property="appInfo" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="BIGINT" />
+		<result column="onSaleDate" property="onSaleDate" jdbcType="TIMESTAMP" />
+		<result column="offSaleDate" property="offSaleDate" jdbcType="TIMESTAMP" />
+		<result column="flatformId" property="flatformId" jdbcType="BIGINT" />
+		<result column="categoryLevel3" property="categoryLevel3"
+			jdbcType="BIGINT" />
+		<result column="downloads" property="downloads" jdbcType="BIGINT" />
+		<result column="createdBy" property="createdBy" jdbcType="BIGINT" />
+		<result column="creationDate" property="creationDate" jdbcType="TIMESTAMP" />
+		<result column="modifyBy" property="modifyBy" jdbcType="BIGINT" />
+		<result column="modifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="categoryLevel1" property="categoryLevel1"
+			jdbcType="BIGINT" />
+		<result column="categoryLevel2" property="categoryLevel2"
+			jdbcType="BIGINT" />
+		<result column="logoPicPath" property="logoPicPath" jdbcType="VARCHAR" />
+		<result column="logoLocPath" property="logoLocPath" jdbcType="VARCHAR" />
+		<result column="versionId" property="versionId" jdbcType="BIGINT" />
+		<result column="sta" property="sta" />
+		<result column="firstName" property="firstName" />
+		<result column="secondName" property="secondName" />
+		<result column="thirdName" property="thirdName" />
+		<result column="versionNo" property="versionNo" />
+		<result column="flatForm" property="flatForm" />
+		<result column="gid" property="gid" />
+	</resultMap>
+
+</mapper>

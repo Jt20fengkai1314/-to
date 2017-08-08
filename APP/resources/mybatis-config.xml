@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  <configuration>
+  			<settings>
+  						<setting name="cacheEnabled" value="true"/>
+  						<setting name="lazyLoadingEnabled" value="true"/>
+  						<!-- 指定 MyBatis 如何自动映射列到字段/ 属性。
+							 PARTIAL 只会自动映射简单, 没有嵌套的结果。
+							 FULL 会自动映射任意复杂的结果(嵌套的或其他情况) -->
+  						<setting name="autoMappingBehavior" value="PARTIAL"/>
+  						<!--设置超时时间, 它决定驱动等待一个数据库响应的时间 -->
+  						<setting name="defaultStatementTimeout" value="25"/>
+  						 <!-- 是否开启自动驼峰命名规则（camel case）映射，即从经典数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 的类似映射。  默认false -->
+  						 <setting name="mapUnderscoreToCamelCase" value="false"/>
+  			</settings>
+  			<!-- 设置别名 -->
+  			<typeAliases>
+  						<typeAlias type="cn.appsys.pojo.appInfo" alias="ai"/>
+  						<typeAlias type="cn.appsys.pojo.devUser" alias="du"/>
+  						<typeAlias type="cn.appsys.pojo.dataDictionary" alias="dd"/>
+  						<typeAlias type="cn.appsys.pojo.dataDictionary" alias="dd"/>
+  						<typeAlias type="cn.appsys.pojo.backendUser" alias="bu"/>
+  						<typeAlias type="cn.appsys.pojo.appVersion" alias="av"/>
+  						
+  						<typeAlias type="cn.appsys.pojo.appCategory" alias="ac"/>
+  						<typeAlias type="cn.appsys.pojo.adPromotion" alias="ap"/> 
+  						<package name="cn.appsys.pojo"/>
+  			</typeAliases>
+  			<!-- mapping 文件路径配置  -->
+  			<mappers>
+  						<mapper resource="cn/appsys/dao/devUserMapper.xml"/>		
+  						<mapper resource="cn/appsys/dao/appInfoMapper.xml"/>		
+  						<mapper resource="cn/appsys/dao/dataDictionaryMapper.xml"/>	
+  					 <mapper resource="cn/appsys/dao/appVersionMapper.xml"/>
+  						<mapper resource="cn/appsys/dao/backendUserMapper.xml"/>
+  						
+  						<mapper resource="cn/appsys/dao/appCategoryMapper.xml"/>	
+  						<mapper resource="cn/appsys/dao/adPromotionMapper.xml"/>
+  			</mappers>
+  </configuration>

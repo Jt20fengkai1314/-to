@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.appsys.dao.appVersionMapper" >
+<!--根据ID修改版本信息  -->
+<update id="VersionUpdate" parameterType="av">
+		update app_version
+		 		<trim prefix="set" suffixOverrides="," suffix="where id=#{av.id}">
+		 				<if test="av.appId!=null">appId=#{av.appId},</if>
+		 				<if test="av.versionNo!=null">versionNo=#{av.versionNo},</if>
+		 				<if test="av.versionInfo!=null">versionInfo=#{av.versionInfo},</if>
+		 				<if test="av.publishStatus!=null">publishStatus=#{av.publishStatus},</if>
+		 				<if test="av.downloadLink!=null">downloadLink=#{av.downloadLink},</if>
+		 				<if test="av.versionSize!=null">versionSize=#{av.versionSize},</if>
+		 				<if test="av.createdBy!=null">createdBy=#{av.createdBy},</if>
+		 				<if test="av.creationDate!=null">creationDate=#{av.creationDate},</if>
+		 				<if test="av.modifyBy!=null">modifyBy=#{av.modifyBy},</if>
+		 				<if test="av.modifyDate!=null">modifyDate=#{av.modifyDate},</if>
+		 				<if test="av.apkLocPath!=null">apkLocPath=#{av.apkLocPath},</if>
+		 				<if test="av.apkFileName!=null">apkFileName=#{av.apkFileName},</if>
+		 		</trim>
+</update>
+<!--根据id查询版本跳转页面信息  -->
+<select id="getIdQuery" resultType="av" parameterType="int">
+		SELECT *  from app_version where id=#{id}
+</select>
+<!-- 查询appinfo表的所有信息 -->
+	<select id="IdQuery" resultType="ai" parameterType="int">
+		SELECT *  from app_info where id=#{id}
+	</select>	
+<!-- 		d.`valueName` AS flatForm,
+		c.`valueName` AS sta ,
+		b.`categoryName` AS firstName,
+		e.`categoryName` AS secondName,
+		f.`categoryName` AS thirdName,
+		g.`versionNo`
+		FROM
+			(app_info a,
+			data_dictionary d,
+			data_dictionary c ,
+			app_category b,
+			app_category e,
+			app_category f)
+		LEFT JOIN
+			app_version g ON g.`appId`=a.`id` AND g.`id`
+		IN
+			(SELECT MAX(id) FROM app_version GROUP BY appId)
+		WHERE
+			a.id=#{id}
+		AND	
+			a.`flatformId`=d.`valueId`
+		AND
+			d.typeCode = 'APP_FLATFORM'
+		AND
+			a.`status`=c.`valueId`
+		AND
+			c.typeCode = 'APP_STATUS'
+		AND
+			b.id=a.`categoryLevel1`
+		AND
+			e.`id`=a.`categoryLevel2`
+		AND
+			f.`id`=a.`categoryLevel3` -->
+
+<!-- 	<resultMap type="ai" id="listQ" autoMapping="true">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="softwareName" property="softwareName" jdbcType="VARCHAR" />
+		<result column="APKName" property="APKName" jdbcType="VARCHAR" />
+		<result column="supportROM" property="supportROM" jdbcType="VARCHAR" />
+		<result column="interfaceLanguage" property="interfaceLanguage"
+			jdbcType="VARCHAR" />
+		<result column="softwareSize" property="softwareSize" />
+		<result column="updateDate" property="updateDate" jdbcType="DATE" />
+		<result column="devId" property="devId" jdbcType="BIGINT" />
+		<result column="appInfo" property="appInfo" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="BIGINT" />
+		<result column="onSaleDate" property="onSaleDate" jdbcType="TIMESTAMP" />
+		<result column="offSaleDate" property="offSaleDate" jdbcType="TIMESTAMP" />
+		<result column="flatformId" property="flatformId" jdbcType="BIGINT" />
+		<result column="categoryLevel3" property="categoryLevel3"
+			jdbcType="BIGINT" />
+		<result column="downloads" property="downloads" jdbcType="BIGINT" />
+		<result column="createdBy" property="createdBy" jdbcType="BIGINT" />
+		<result column="creationDate" property="creationDate" jdbcType="TIMESTAMP" />
+		<result column="modifyBy" property="modifyBy" jdbcType="BIGINT" />
+		<result column="modifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="categoryLevel1" property="categoryLevel1"
+			jdbcType="BIGINT" />
+		<result column="categoryLevel2" property="categoryLevel2"
+			jdbcType="BIGINT" />
+		<result column="logoPicPath" property="logoPicPath" jdbcType="VARCHAR" />
+		<result column="logoLocPath" property="logoLocPath" jdbcType="VARCHAR" />
+		<result column="versionId" property="versionId" jdbcType="BIGINT" />
+		<result column="sta" property="sta" />
+		<result column="firstName" property="firstName" />
+		<result column="secondName" property="secondName" />
+		<result column="thirdName" property="thirdName" />
+		<result column="versionNo" property="versionNo" />
+		<result column="flatForm" property="flatForm" />
+	</resultMap> -->
+<!-- 新增 -->
+<insert id="VersionAdd" parameterType="av">
+	INSERT INTO 
+			app_version
+							
+			values(null,#{av.appId},#{av.versionNo},#{av.versionInfo},
+						#{av.publishStatus},#{av.downloadLink},#{av.versionSize},
+						#{av.createdBy},#{av.creationDate},#{av.modifyBy},#{av.modifyDate},
+						#{av.apkLocPath},#{av.apkFileName})
+</insert>
+  <select id="VersionQueryAll" resultMap="VersionQuery">
+   SELECT 
+ 				v.*,
+ 				i.`softwareName` AS isoftwareName
+	FROM 
+				`app_version` v,
+				`app_info` i
+    WHERE
+    			v.`appId`=i.`id` 
+	ORDER BY 
+				v.`appId` DESC	
+	LIMIT 0,3 
+  </select>
+  <resultMap type="av" id="VersionQuery" autoMapping="true">
+  		<result property="isoftwareName" column="isoftwareName"/>
+  </resultMap>
+</mapper>

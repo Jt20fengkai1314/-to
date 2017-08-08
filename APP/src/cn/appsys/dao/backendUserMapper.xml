@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.appsys.dao.backendUserMapper" >
+<!-- 审核通过 -->
+<update id="Pass" parameterType="int">
+	update app_info set status=2 where id=#{id}
+</update>
+<!-- 审核不通过 -->
+<update id="NoPass" parameterType="int">
+    update app_info set status=3 where id=#{id} 
+</update>
+<!-- 根据ID 查询info表信息 -->
+<select id="info" resultType="ai" parameterType="int">
+	select * from app_info where id=#{id}
+</select>
+<!-- 根据info表的Versionid来查询版本信息 -->
+<select id="Version" resultType="av">
+	select * from app_version where id=#{Versionid}
+</select>
+<!-- 查询总记录数 -->
+	<select id="count" parameterType="ai" resultType="int">
+			select count(id) from app_info
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="ai.softwareName!=null and ai.softwareName!=''">
+				and softwareName like CONCAT('%',#{ai.softwareName},'%')
+			</if>
+			<if test="ai.flatformId!=null and ai.flatformId!='' and ai.flatformId!=0">
+				and flatformId=#{ai.flatformId}
+			</if>
+			<if test="ai.status!=null and ai.status!='' and ai.status!=0">
+				and status=#{ai.status}
+			</if>
+			<if test="ai.categoryLevel1!=null and ai.categoryLevel1!='' and ai.categoryLevel1!=0">
+				and categoryLevel1=#{ai.categoryLevel1}
+			</if>
+			<if test="ai.categoryLevel2!=null and ai.categoryLevel2!='' and ai.categoryLevel2!=0">
+			 	and categoryLevel2=#{ai.categoryLevel2}
+			</if>
+			<if test="ai.categoryLevel3!=null and ai.categoryLevel3!='' and ai.categoryLevel3!=0">
+				and categoryLevel3=#{ai.categoryLevel3}
+			</if>
+		</trim>		
+	</select>
+	<!-- 登录查询验证 -->
+ 	<select id="HTlogin" resultType="bu" parameterType="String">
+ 			select * from backend_user where userCode=#{userCode}
+ 	</select>
+</mapper>
